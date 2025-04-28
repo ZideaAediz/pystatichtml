@@ -1,8 +1,8 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
-class HTMLNode:
+class TestHTMLNode(unittest.TestCase):
     def test_noprop(self):
         node = HTMLNode(None, None, None, {})
         self.assertEqual(node.props_to_html(), "")
