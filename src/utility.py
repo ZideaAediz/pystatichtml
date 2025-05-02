@@ -136,3 +136,46 @@ def block_to_block_type(block: BlockType):
         return BlockType.ORDERED_LIST
     
     return BlockType.PARAGRAPH
+
+def block_to_html_node(block):
+    ret = None
+    match block_to_block_type(block):        
+        case BlockType.PARAGRAPH:
+            children = []
+            for text in text_to_textnodes(block):
+                children.append(text_node_to_html_node(text))
+            ret = ParentNode("p", children)
+
+        case BlockType.QUOTE:
+            children = []
+            for text in text_to_textnodes(block):
+                children.append(text_node_to_html_node(text))
+            ret = ParentNode("blockquote", children)
+        case BlockType.HEADING:
+            headingnumber = 1
+            for i in range(0, len(block[:6])):
+                if block[i] != '#':
+                    break
+                headingnumber += 1
+            ret = LeafNode(f"h{headingnumber}")
+            for text in text_to_textnodes(block):
+                ret.children.append(text_node_to_html_node(text))
+        case BlockType.CODE:
+            ret = ParentNode("pre", [text_node_to_html_node(TextNode(block, TextType.CODE))])
+        case BlockType.UNORDERED_LIST:
+            ret = ParentNode("ul", [LeafNode("li", block)])
+        case BlockType.ORDERED_LIST:
+            ret = ParentNode("ol", [LeafNode("li", block)])
+
+    return ret
+
+def markdown_to_html_node(markdown):
+    children = []
+    blocks = markdown_to_blocks(markdown)
+
+    for block in blocks:
+        node = block_to_html_node(block)
+        if node:
+            children.append(node)
+            
+    return ParentNode("div", children)
