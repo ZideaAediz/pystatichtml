@@ -31,7 +31,6 @@ def split_nodes_delimiter(old_nodes, delimiter):
             ret_nodes.append(node)
         else:
             while True:
-                print(texts)
                 if len(texts) > 0 and texts[0] != "":
                     ret_nodes.append(TextNode(texts[0], TextType.NORMAL))
 
@@ -149,7 +148,6 @@ def block_to_html_node(block):
     match block_to_block_type(block):        
         case BlockType.PARAGRAPH:
             children = []
-            print(text_to_textnodes(block))
             for text in text_to_textnodes(block):
                 children.append(text_node_to_html_node(text))
             ret = ParentNode("p", children)
@@ -202,8 +200,8 @@ def markdown_to_html_node(markdown):
     return ParentNode("div", children)
 
 def copy_to_public():
-    shutil.rmtree("./public")
-    shutil.copytree("./static/", "./public", dirs_exist_ok=True)
+    shutil.rmtree("./docs", ignore_errors=True)
+    shutil.copytree("./static/", "./docs", dirs_exist_ok=True)
 
 def extract_title(markdown):
     for line in markdown.split("\n"):
@@ -228,18 +226,20 @@ def generate_page(from_path, template_path, dest_path):
 
     template_contents = template_contents.replace("{{ Title }}", title)
     template_contents = template_contents.replace("{{ Content }}", page.to_html())
+    template_contents = template_contents.replace("href=\"/", "href=\"{basepath}")
+    template_contents = template_contents.replace("src=\"/", "src=\"{basepath}")
 
     with open(dest_path, "w") as dp:
         dp.write(template_contents)
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
-    os.makedirs("./public/blog/glorfindel")
-    generate_page("./content/blog/glorfindel/index.md", "template.html", "./public/blog/glorfindel/index.html")
-    os.makedirs("./public/blog/majesty")
-    generate_page("./content/blog/majesty/index.md", "template.html", "./public/blog/majesty/index.html")
-    os.makedirs("./public/blog/tom")
-    generate_page("./content/blog/tom/index.md", "template.html", "./public/blog/tom/index.html")
-    os.makedirs("./public/contact")
-    generate_page("./content/contact/index.md", "template.html", "./public/contact/index.html")
-    generate_page("./content/index.md", "template.html", "./public/index.html")
+    os.makedirs("./docs/blog/glorfindel")
+    generate_page("./content/blog/glorfindel/index.md", "template.html", "./docs/blog/glorfindel/index.html")
+    os.makedirs("./docs/blog/majesty")
+    generate_page("./content/blog/majesty/index.md", "template.html", "./docs/blog/majesty/index.html")
+    os.makedirs("./docs/blog/tom")
+    generate_page("./content/blog/tom/index.md", "template.html", "./docs/blog/tom/index.html")
+    os.makedirs("./docs/contact")
+    generate_page("./content/contact/index.md", "template.html", "./docs/contact/index.html")
+    generate_page("./content/index.md", "template.html", "./docs/index.html")
 
