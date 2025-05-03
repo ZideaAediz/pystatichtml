@@ -114,6 +114,11 @@ This is the same paragraph on a new line
         self.assertEqual(block_to_block_type("- Good"), BlockType.UNORDERED_LIST)
         self.assertEqual(block_to_block_type("-Bad"), BlockType.PARAGRAPH)
 
+        print(markdown_to_blocks("""- You can spend years studying the legendarium and still not understand its depths
+- It can be enjoyed by children and adults alike
+- Disney _didn't ruin it_ (okay, but Amazon might have)
+- It created an entirely new genre of fantasy"""))
+
         self.assertEqual(block_to_block_type("1. Good"), BlockType.ORDERED_LIST)
         self.assertEqual(block_to_block_type("1, Bad"), BlockType.PARAGRAPH)
         self.assertEqual(block_to_block_type("1.Bad"), BlockType.PARAGRAPH)
@@ -135,5 +140,28 @@ This is another paragraph with _italic_ text and `code` here
         #     html,
         #     "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
         # )
+
+    def test_publish(self):
+        copy_to_public()
+
+
+    def test_extract_title(self):
+        md_bad = """
+## No Header
+Nope
+### Not this either
+#Nor this
+"""
+        md_good = """
+This is nothing
+# Title good
+"""
+
+        with self.assertRaises(Exception):
+            extract_title(md_bad)
+
+        self.assertEqual(extract_title(md_good), "Title good")
+        self.assertEqual(extract_title("# Yes"), "Yes")
+
 if __name__ == "__main__":
     unittest.main()

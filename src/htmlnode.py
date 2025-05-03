@@ -3,7 +3,11 @@ from textnode import *
 class HTMLNode:
     def __init__(self, tag = None, value = None, children: list = None, props: dict = None):
         self.tag = tag
-        self.value = value
+        if not value:
+            self.value = ""
+        else:
+            self.value = value
+
         if not children:
             self.children = []
         else:
@@ -32,8 +36,9 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if not self.value:
-            raise ValueError("All leaf nodes must have a value")
+        # if not self.value:
+        #     print(f"{self.tag} {self.value}")
+        #     raise ValueError(f"{self.tag} All leaf nodes must have a value")
         
         if not self.tag:
             return self.value
@@ -48,8 +53,8 @@ class ParentNode(HTMLNode):
         if not self.tag:
             raise ValueError("missing tag")
         
-        if not self.children:
-            raise ValueError("missing children")
+        # if not self.children:
+        #     raise ValueError("missing children")
         
         retstr = f"<{self.tag}>"
         for child in self.children:

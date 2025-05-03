@@ -1,7 +1,8 @@
+from utility import *
 from textnode import *
 
 def main():
-    tn = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-    print(tn)
+    copy_to_public()
+    generate_pages_recursive("./content", ".", "./public")
 
 main()
